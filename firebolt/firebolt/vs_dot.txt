@@ -1,0 +1,73 @@
+//normal mapping currently disabled
+
+vector light_position;
+
+
+struct VS_INPUT
+{
+     vector position    : POSITION;
+     vector normal      : NORMAL0;
+     vector tangent     : NORMAL1;
+     vector bitangent   : NORMAL2;
+
+     float2 base        : TEXCOORD0;
+
+     float4 b0          : TEXCOORD1;
+     float4 b1          : TEXCOORD2;
+     float4 b2          : TEXCOORD3;
+     float4 b3          : TEXCOORD4;
+
+     float4 i0          : TEXCOORD5;
+     float4 i1          : TEXCOORD6;
+     float4 i2          : TEXCOORD7;
+     float4 i3          : TEXCOORD8;
+
+     vector color       : TEXCOORD9;
+
+
+};
+
+struct VS_OUTPUT
+{
+     vector position  : POSITION;
+     float2 base      : TEXCOORD0;
+     float3 light     : TEXCOORD1;
+     vector color     : TEXCOORD2;
+
+};
+
+VS_OUTPUT main(VS_INPUT input)
+{
+
+  VS_OUTPUT output = (VS_OUTPUT)0;
+
+  float4x4 m;
+  m[0] = input.b0;
+  m[1] = input.b1;
+  m[2] = input.b2;
+  m[3] = input.b3;
+
+  output.position = mul(input.position, m);
+  output.base = input.base;
+
+
+  m[0] = input.i0;
+  m[1] = input.i1;
+  m[2] = input.i2;
+  m[3] = input.i3;
+
+
+  float3 vLight = normalize(mul(light_position, m) - input.position);
+
+  float3x3 tangent_space;
+  tangent_space[0] = input.tangent;
+  tangent_space[1] = input.bitangent;
+  tangent_space[2] = input.normal;
+
+
+  output.light =  mul(tangent_space, vLight);
+  output.color = input.color;
+
+  return output;
+
+}

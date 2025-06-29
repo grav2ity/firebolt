@@ -1,0 +1,32 @@
+
+struct PS_INPUT
+{
+    float2 base : TEXCOORD0;
+    float3 light : TEXCOORD1;
+    vector color : TEXCOORD2;
+};
+
+struct PS_OUTPUT
+{
+     vector diffuse : COLOR;
+};
+
+
+
+PS_OUTPUT main(PS_INPUT input)
+{
+     PS_OUTPUT output = (PS_OUTPUT)0;
+
+     float3 li= input.light.xyz;
+     vector nr;
+     nr.x =0;
+     nr.y =0;
+     nr.z =1;
+     nr.w =1;
+     float s = dot(normalize(li), nr);
+     if(s<0.0f) s=0.0f;
+
+     output.diffuse = input.color*s;
+
+     return output;
+}

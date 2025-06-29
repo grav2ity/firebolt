@@ -1,0 +1,23 @@
+vector lightDirection;
+matrix worldViewProj;
+vector color;
+
+struct VS_INPUT
+{
+     vector position    : POSITION;
+     vector normal      : NORMAL;
+};
+
+struct VS_OUTPUT
+{
+     vector position  : POSITION;
+     vector color     : COLOR;
+};
+
+VS_OUTPUT main(VS_INPUT input)
+{
+  VS_OUTPUT output = (VS_OUTPUT)0;
+  output.position = mul(input.position, worldViewProj);
+  output.color = 0.3 * dot(-lightDirection, input.normal ) * color + 0.7 * color;
+  return output;
+}
